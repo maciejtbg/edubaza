@@ -1,0 +1,30 @@
+# Włączenie obsługi nagłówków
+<IfModule mod_headers.c>
+    # Zezwól na dostęp z tej samej domeny
+    Header set Access-Control-Allow-Origin "*"
+
+    # Zezwól na metody GET, POST i OPTIONS
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    
+    # Zezwól na nagłówki X-Requested-With i Content-Type
+    Header set Access-Control-Allow-Headers "X-Requested-With, Content-Type"
+    
+    # Jeżeli żądanie to OPTIONS, to zwróć status 200
+    SetEnvIf Request_Method OPTIONS CORS_preflight
+    Header set Access-Control-Allow-Origin "*" env=CORS_preflight
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS" env=CORS_preflight
+    Header set Access-Control-Allow-Headers "X-Requested-With, Content-Type" env=CORS_preflight
+</IfModule>
+
+# Dodaj obsługę plików CSS i JS z różnych źródeł (w przypadku konieczności)
+<FilesMatch "\.(css|js)$">
+    Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
+
+# Włącz kompresję GZIP (opcjonalne, ale przyspiesza ładowanie strony)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript
+</IfModule>
+
+# Obsługuje pliki .htaccess w przypadku problemów z uprawnieniami
+Options +FollowSymLinks
