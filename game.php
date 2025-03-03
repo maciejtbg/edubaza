@@ -1,48 +1,22 @@
+
+
 <?php
 session_start();
-require_once 'db.php';
 
-// Sprawdź, czy użytkownik jest zalogowany
-if (!isset($_SESSION['user_id'])) {
-    $userData = ["error" => "Błąd: użytkownik niezalogowany!"];
-} else {
-    $user_id = $_SESSION['user_id'];
-    $stmt = $pdo->prepare("SELECT u.username, u.points, u.level, u.gender, u.streak_days, r.name AS race 
-                           FROM users u 
-                           JOIN races r ON u.race_id = r.id 
-                           WHERE u.id = ?");
-    $stmt->execute([$user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+// Zmockowane dane użytkownika (symulacja danych z bazy)
+$userData = [
+    "username"       => "Janek123",
+    "race"           => "orc",
+    "gender"         => "female",
+    "level"          => 5,
+    "points"         => 120,
+    "streakDays"     => 30,
+    "characterImage" => "assets/orc_female.png"
 
-    if (!$user) {
-        $userData = ["error" => "Błąd: użytkownik nie istnieje!"];
-    } else {
-        $originalPath = "assets/" . strtolower($user['race']) . "_" . $user['gender'] . ".png";
 
-        if (!file_exists($originalPath)) {
-            $userData = [
-                "username"       => $user['username'],
-                "race"           => $user['race'],
-                "level"          => (int)$user['level'],
-                "points"         => (int)$user['points'],
-                "streakDays"     => (int)$user['streak_days'],
-                "characterImage" => "assets/placeholder.png",
-                "missingFile"    => $originalPath
-            ];
-        } else {
-            $userData = [
-                "username"       => $user['username'],
-                "race"           => $user['race'],
-                "level"          => (int)$user['level'],
-                "points"         => (int)$user['points'],
-                "streakDays"     => (int)$user['streak_days'],
-                "characterImage" => $originalPath,
-                "missingFile"    => null
-            ];
-        }
-    }
-}
+];
 
+// Przekształcenie danych PHP w format JSON dla JavaScript
 $userJson = json_encode($userData);
 ?>
 
@@ -173,6 +147,7 @@ $userJson = json_encode($userData);
             } else {
                 let charSprite = this.add.image(window.innerWidth / 2, window.innerHeight / 2, "character");
                 charSprite.setScale(1.5);
+                charSprite.setDisplaySize(200,200);
             }
 
             // Przyciski po prawej stronie
